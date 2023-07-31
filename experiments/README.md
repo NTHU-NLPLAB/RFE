@@ -71,3 +71,19 @@ print(f'predicted tags: {example_sent_preds["pred_tags"]}')
 >> ['O', 'O', 'O', 'O', 'O', 'B-OWN', 'I-OWN', 'I-OWN', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O']
 
 ```
+
+# Post-processing model predictions
+Because the model uses a subword tokenizer, which splits input words into subwords, the predicted BIO tags correspond to subwords, not words. We de-subword the subwords and align their corresponding BIO tags in this step wiht `../data/postprocess_span.py`.
+
+`../data/postprocess_span.py` requires several external files:
+- **`in_file`** is the model output. It should be a `.jsonl` file, each line a python dictionary with `paragraph`, `pred_tags` (predicted tags), `seq_tags` (gold tags), and optionally, `top_k_tags`, as keys.
+- **`idx_to_tag_file`** is the file that maps the BIO tags used during training to integer indices. You can find this under `experiments/<experiment_name>/models/vocab` as `move_tags.txt`.
+- **`idx_to_label_file`** is the file that maps class labels used during training to integer indices. This isn't generated if you train a CRF tagger and can safely ignore this option. If you use a multi-tasking model, you can find this under `experiments/<experiment_name>/models/vocab` as `move_tags.txt`.
+- **`configs`** is the configuration file used for the experiments. This is used to retrieve additional tokens defined within. If you do not use this, special tokens such as `[ IMAGE ]`, `CREF`, and `CITATION`, `EQN` will not be decoded. You can find this under `experiments/<experiment_name>/` as `configs.jsonnet`.
+
+Other information for  `../data/postprocess_span.py`:
+- It outputs `<model output filename>_postproc.jsonl` in **`out_dir`**, the output directory. For example, if the model output name is `dev_predictions.jsonl`, the output file would be `out_dir/dev_predictions_postproc.jsonl`.
+- **`lm`** is the tokenizer to decode the subword indices back into text. You should use the same tokenizer used during training. The defualt is `allenai/scibert_scivocab_uncased`.
+- **`force_non_o`** is an experimental feature that retrieves the 2nd-best Viterbi score for the CRF model predictions. This is to see if the 2nd-best predictions of all-O predictions are of any use. To be able to use this, add the `--overrides '{"model.top_k": 2}' \` option to `allennlp evaluate` or `allennlp predict` to generate more than just 1 prediction for each sequence.
+- **`batched`** is required if the **inputs** are batched. This is the case if you specify `--batch-size` at inference. 
+

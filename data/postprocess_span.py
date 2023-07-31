@@ -83,8 +83,12 @@ def convert_to_easy_read(data, idx_to_tag_file, idx_to_label_file, batched):
     global has_match, gold_has_match, total
     with open(idx_to_tag_file) as f:
         idx_to_tag = {i: line.strip() for i, line in enumerate(f.readlines())}
-    with open(idx_to_label_file) as f:
-        idx_to_label = {i: line.strip() for i, line in enumerate(f.readlines())}
+    if os.path.exists(idx_to_label_file):
+        with open(idx_to_label_file) as f:
+            idx_to_label = {i: line.strip() for i, line in enumerate(f.readlines())}
+    else:
+        print("No idx_to_label file provided! Setting `idx_to_label` to None")
+        idx_to_label = None
 
     if batched:
         batch_tokens = data["merged_tokens"]
@@ -113,7 +117,7 @@ def convert_to_easy_read(data, idx_to_tag_file, idx_to_label_file, batched):
                 }
                 if 'seq_tags' in data.keys():
                     out_dict['seq_tags'] = [idx_to_tag[it] for it in data['seq_tags'][batch_idx][i]]
-                if 'sent_labels' in data.keys():
+                if 'sent_labels' in data.keys() and idx_to_label:
                     out_dict['sent_labels'] = [idx_to_label[it] for it in [data['sent_labels'][batch_idx][i]]]
                 if 'realigned_gold_tags' in data.keys():
                     out_dict['realigned_gold_tags'] = data['realigned_gold_tags'][batch_idx][i]
@@ -444,18 +448,11 @@ if __name__=="__main__":
                     agg_data[key] = []
                 agg_data[key].append(val)
 
-    # TODO: move convert_to_easy_read and bio_to_easy_read to crf_human_evals.py
+    # TODO: move convert_to_easy_read and bio_to_easy_read to crf_human_evals.py?
     out_name = os.path.basename(args.in_file).split("_")[0]+"_postproc"
     with jsonlines.open(os.path.join(args.out_dir, out_name+".jsonl"), "w") as f:
-        # open(os.path.join(args.out_dir, "test_postproc_easy_read.txt"), "w") as ef:
         for d in convert_to_easy_read(agg_data, args.idx_to_tag_file, args.idx_to_label_file, args.batched):
             f.write(d)
-            # ef.write("\t".join([d["sent_labels"], d["easy_read"]+"\n"]))
 
         print(f"Results saved to {os.path.join(args.out_dir, out_name+'.jsonl')}")
     
-    # if args.check_mem:
-    #     print(f"gold_has_match: {gold_has_match}")
-    #     print(f"has_match: {has_match}")
-    #     print(f"pred_seq_is_in_patterns: {pred_seq_is_in_patterns} / {has_match}")
-    #     print(f"total: {total}")

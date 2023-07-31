@@ -13,7 +13,16 @@ If you find the implementation helpful, please cite my thesis:
 ```
 
 # Setup
-First, clone the project to your machine: 
+> The python version used is **3.8.10**, but python **3.9.6** works fine too.
+
+We recommend creating a virtual environment for the experiments:
+
+```bash
+python3.8 -m venv .env
+source .env/bin/activate
+```
+
+After you createrd the virtual environment, clone the project and install necessary packages:
 
 ```bash
 git clone https://github.com/LKChenLK/RFE.git
@@ -21,22 +30,12 @@ cd RFE
 pip install -r requirements.txt
 ```
 
-NExt, we recommend creating a virtual environment for the experiments:
-> The python version used is **3.8.10**, but python **3.9.6** works fine too.
-
-```bash
-python3.8 -m venv .env
-source .env/bin/activate
-```
-
 
 # Data
 
 The pre-processed data is available [here](https://drive.google.com/drive/folders/1RNO9vkdbmr8YBZvRzes3rA41frAXFOM_?usp=sharing). Please see [data](data) for further details.
 
-
-# Experiments
-To be able to use AllenNLP for training, evaluation, and prediction, you need to install `rfe` as a package. Run
+To be able to use AllenNLP, you need to install `rfe` as a package. Run
 ```bash
 pip install -e .
 ```

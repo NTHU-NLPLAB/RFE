@@ -87,3 +87,21 @@ Other information for  `../data/postprocess_span.py`:
 - **`force_non_o`** is an experimental feature that retrieves the 2nd-best Viterbi score for the CRF model predictions. This is to see if the 2nd-best predictions of all-O predictions are of any use. To be able to use this, add the `--overrides '{"model.top_k": 2}' \` option to `allennlp evaluate` or `allennlp predict` to generate more than just 1 prediction for each sequence.
 - **`batched`** is required if the **inputs** are batched. This is the case if you specify `--batch-size` at inference. 
 
+Example: Say you want to post-process the model outputs of `crf-scibert`, and want to view the 2nd-best scores of the CRF predictions. To do this, fist make sure you've run inferenced with the `--overrides '{"model.top_k": 2}' \` option. The model output is stored as `experiments/crf-scibert/dev_predictions.jsonl` by default.
+
+```bash
+cd crf-scibert
+mkdir -p postprocessed
+python ../data/postprocess_span.py
+    --in_file dev_predictions.jsonl \
+    --out_dir . \
+    --idx_to_tag_file ./models/vocab/move_tags.txt \
+    --configs configs.jsonnet \
+    --lm "allenai\/scibert_scivocab_uncased" \
+    --force_non_o \
+    --batched
+```
+You should get `dev_predictions_postproc.jsonl` as the output, with one exampler per line. Each example looks something like this:
+```python
+{"seq_tags": [1, 0, 0, ..., 0, 0, 0, 0], "merged_tokens": ["the", "speaker", "attempts", "to", "achieve", "this", "goal", "by", "building", "a", "description", "of", "the", "object", "that", "she", "believes", "will", "give", "the", "hearer", "the", "ability", "to", "identify", "it", "when", "it", "is", "possible", "to", "do", "so", "."], "realigned_gold_tags": ["O", "O", "O", "O", ... , "O", "O"], "realigned_pred_tags_0": ["O", "O", "O", "O", ... , "O", "O"], "realigned_pred_tags_1": ["O", "O", "O", "O", ... , "O", "O"], "score_0": 138.4251251220703, "score_1": 133.5336456298828, "pred_tags": ["O", "O", "O", "O", ... , "O", "O"]}
+``` 

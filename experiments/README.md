@@ -103,5 +103,5 @@ python ../data/postprocess_span.py
 ```
 You should get `dev_predictions_postproc.jsonl` as the output, with one exampler per line. Each example looks something like this:
 ```python
-{"seq_tags": [1, 0, 0, ..., 0, 0, 0, 0], "merged_tokens": ["the", "speaker", "attempts", "to", "achieve", "this", "goal", "by", "building", "a", "description", "of", "the", "object", "that", "she", "believes", "will", "give", "the", "hearer", "the", "ability", "to", "identify", "it", "when", "it", "is", "possible", "to", "do", "so", "."], "realigned_gold_tags": ["O", "O", "O", "O", ... , "O", "O"], "realigned_pred_tags_0": ["O", "O", "O", "O", ... , "O", "O"], "realigned_pred_tags_1": ["O", "O", "O", "O", ... , "O", "O"], "score_0": 138.4251251220703, "score_1": 133.5336456298828, "pred_tags": ["O", "O", "O", "O", ... , "O", "O"]}
+{"seq_tags": [1, 0, 0, ..., 0, 0], "merged_tokens": ["the", "speaker", "attempts", ..., "so", "."], "realigned_gold_tags": ["O", "O", "O", ... , "O", "O"], "realigned_pred_tags_0": ["O", "O", "O", ... , "O", "O"], "realigned_pred_tags_1": ["O", "O", "O", ... , "O", "O"], "score_0": 138.4251251220703, "score_1": 133.5336456298828, "pred_tags": ["O", "O", "O", ... , "O", "O"]}
 ``` 

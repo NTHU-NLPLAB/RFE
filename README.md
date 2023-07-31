@@ -32,11 +32,11 @@ pip install -r requirements.txt
 
 
 # Data
-
 The pre-processed data is available [here](https://drive.google.com/drive/folders/1RNO9vkdbmr8YBZvRzes3rA41frAXFOM_?usp=sharing). Please see [data](data) for further details.
 
-To be able to use AllenNLP, you need to install `rfe` as a package. Run
+# Experiments
+We used AllenNLP to build the models and run experiments. To be able to use AllenNLP, you need to install `rfe` as a package. Run
 ```bash
 pip install -e .
 ```
-For reproducing the experiments in the paper, see [experiments](experiments).
+For details in reproducing the experiments in the paper, see [experiments](experiments).
